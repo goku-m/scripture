@@ -74,10 +74,6 @@ export const DisplayTestScripture = () => {
 
     const words = useMemo(() => scripture.text.split(" "), [scripture.text]);
     const hiddenIndices = useMemo(() => getRandomIndices(words.length), [scripture.text]);
-    const hiddenWords = hiddenIndices.map((index) => ({
-        index,
-        word: cleanWord(words[index]),
-    }));
     const answerChoices = useMemo(() => {
         if (activeBlankIndex === null) {
             return [];
@@ -115,8 +111,21 @@ export const DisplayTestScripture = () => {
                 window.history.pushState(null, "", window.location.href);
             };
 
+            const onBeforeUnload = (event: BeforeUnloadEvent) => {
+                if (allowLeaveRef.current) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.returnValue = "";
+            };
+
             window.addEventListener("popstate", onPopState);
-            return () => window.removeEventListener("popstate", onPopState);
+            window.addEventListener("beforeunload", onBeforeUnload);
+            return () => {
+                window.removeEventListener("popstate", onPopState);
+                window.removeEventListener("beforeunload", onBeforeUnload);
+            };
         }
 
         const onBackPress = () => true;

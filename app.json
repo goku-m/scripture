@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "scripture",
+    "description": "A scripture memorization and quiz app for practicing Bible verses on web and mobile.",
     "slug": "scripture",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +9,7 @@
     "scheme": "scripture",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/images/icon.png"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,8 +21,14 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "name": "Scripture",
+      "shortName": "Scripture",
+      "description": "Memorize and quiz Bible verses in a clean progressive web app.",
+      "lang": "en",
+      "scope": "/",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "themeColor": "#E6F4FE"
     },
     "plugins": [
       "expo-router",

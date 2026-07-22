@@ -1,7 +1,6 @@
-import { Pressable, Text, View, StyleSheet, TouchableOpacity } from "react-native"
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native"
 import { SCRIPTURE } from "../../../data/scriptures"
-import { Link, router } from "expo-router"
-import { useMemo } from "react";
+import { router } from "expo-router"
 
 
 
