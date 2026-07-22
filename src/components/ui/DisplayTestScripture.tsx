@@ -155,7 +155,6 @@ export const DisplayTestScripture = () => {
 
         setResultsChecked(false);
         setModalVisible(false);
-        setActiveBlankIndex(null);
     };
 
     const handleCheckAnswers = () => {
@@ -285,7 +284,10 @@ export const DisplayTestScripture = () => {
 
                         <Pressable
                             style={styles.closeButton}
-                            onPress={() => setModalVisible(false)}
+                            onPress={() => {
+                                setModalVisible(false);
+                                setActiveBlankIndex(null);
+                            }}
                         >
                             <Text style={styles.closeButtonText}>Close</Text>
                         </Pressable>
