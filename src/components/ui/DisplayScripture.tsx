@@ -1,6 +1,7 @@
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native"
-import { SCRIPTURE } from "../../../data/scriptures"
-import { router } from "expo-router"
+import { Text, View, StyleSheet, Pressable } from "react-native";
+import { SCRIPTURE } from "../../../data/scriptures";
+import { router } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 
 
 
@@ -8,7 +9,74 @@ type Props = {
     index: number;
 };
 
+const COUNTDOWN_SECONDS = 10;
+
 export const DisplayScripture = ({ index }: Props) => {
+    const [progress, setProgress] = useState(0);
+    const [shouldNavigate, setShouldNavigate] = useState(false);
+    const hasNavigatedRef = useRef(false);
+    const rafRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        setProgress(0);
+        setShouldNavigate(false);
+        hasNavigatedRef.current = false;
+
+        const durationMs = COUNTDOWN_SECONDS * 1000;
+        const startTime = performance.now();
+
+        const animate = (now: number) => {
+            const elapsed = now - startTime;
+            const nextProgress = Math.min(elapsed / durationMs, 1);
+            setProgress(nextProgress);
+
+            if (nextProgress >= 1) {
+                setShouldNavigate(true);
+                return;
+            }
+
+            rafRef.current = requestAnimationFrame(animate);
+        };
+
+        rafRef.current = requestAnimationFrame(animate);
+
+        return () => {
+            if (rafRef.current !== null) {
+                cancelAnimationFrame(rafRef.current);
+            }
+        };
+    }, [index]);
+
+    useEffect(() => {
+        if (!shouldNavigate || hasNavigatedRef.current) {
+            return;
+        }
+
+        hasNavigatedRef.current = true;
+        router.replace({
+            pathname: "/scripture-test",
+            params: { id: String(index) },
+        });
+    }, [shouldNavigate, index]);
+
+    const navigateToQuiz = () => {
+        if (hasNavigatedRef.current) {
+            return;
+        }
+
+        hasNavigatedRef.current = true;
+        setShouldNavigate(true);
+        router.replace({
+            pathname: "/scripture-test",
+            params: { id: String(index) },
+        });
+    };
+
+    const progressAngle = Math.max(0, Math.min(360, progress * 360));
+    const ringStyle = {
+        backgroundImage: `conic-gradient(#5b9bd5 0deg ${progressAngle}deg, #e4e1de ${progressAngle}deg 360deg)`,
+    } as any;
+
     return (
         <View>
             <Text style={{ color: "black", fontSize: 18, marginTop: 10, fontWeight: "bold" }}>
@@ -18,34 +86,48 @@ export const DisplayScripture = ({ index }: Props) => {
                 {SCRIPTURE[index].text}
             </Text>
 
-            <View style={styles.start_button}>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() =>
-                        router.replace({
-                            pathname: "/scripture-test",
-                            params: { id: String(index) },
-                        })
-                    }
-                >
-                    <Text style={{ color: "white", fontSize: 20 }}>Start</Text>
-                </TouchableOpacity>
-            </View>
+            <Pressable style={styles.timerWrap} onPress={navigateToQuiz}>
+                <View style={[styles.ring, ringStyle]}>
+                    <View style={styles.centerButton}>
+                        <Text style={styles.centerLabel}>Start</Text>
+                    </View>
+                </View>
+            </Pressable>
         </View>
     );
 };
 
 
 const styles = StyleSheet.create({
-
-    start_button: {
-        marginTop: 20
+    timerWrap: {
+        marginTop: 22,
+        alignSelf: "center",
     },
-    button: {
-        height: 25,
-        width: 50,
-        backgroundColor: "red",
+    ring: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        alignItems: "center",
         justifyContent: "center",
-        alignItems: "center"
-    }
+        backgroundColor: "#f4f1ec",
+        padding: 10,
+    },
+    centerButton: {
+        width: 92,
+        height: 92,
+        borderRadius: 46,
+        backgroundColor: "#5b9bd5",
+        alignItems: "center",
+        justifyContent: "center",
+        shadowColor: "#000",
+        shadowOpacity: 0.18,
+        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 5 },
+        elevation: 5,
+    },
+    centerLabel: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "800",
+    },
 });

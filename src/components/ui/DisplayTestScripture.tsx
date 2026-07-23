@@ -57,6 +57,10 @@ export const DisplayTestScripture = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
     const [activeBlankIndex, setActiveBlankIndex] = useState<number | null>(null);
+    const [pendingSelection, setPendingSelection] = useState<{
+        blankIndex: number;
+        word: string;
+    } | null>(null);
     const [resultsChecked, setResultsChecked] = useState(false);
     const allowLeaveRef = useRef(false);
 
@@ -148,13 +152,21 @@ export const DisplayTestScripture = () => {
             return;
         }
 
-        setSelectedAnswers((current) => ({
-            ...current,
-            [activeBlankIndex]: word,
-        }));
-
+        setPendingSelection({ blankIndex: activeBlankIndex, word });
         setResultsChecked(false);
         setModalVisible(false);
+    };
+
+    const handleModalDismiss = () => {
+        if (pendingSelection) {
+            setSelectedAnswers((current) => ({
+                ...current,
+                [pendingSelection.blankIndex]: pendingSelection.word,
+            }));
+        }
+
+        setPendingSelection(null);
+        setActiveBlankIndex(null);
     };
 
     const handleCheckAnswers = () => {
@@ -223,8 +235,8 @@ export const DisplayTestScripture = () => {
                 <Pressable style={styles.checkButton} onPress={handleCheckAnswers}>
                     <Text style={styles.checkButtonText}>
                         {resultsChecked
-                            ? `Checked: ${correctCount}/${hiddenIndices.length}`
-                            : "Check Answers"}
+                            ? `${correctCount}/${hiddenIndices.length}`
+                            : "Done"}
                     </Text>
                 </Pressable>
             ) : (
@@ -257,6 +269,7 @@ export const DisplayTestScripture = () => {
                 transparent
                 animationType="fade"
                 onRequestClose={() => setModalVisible(false)}
+                onDismiss={handleModalDismiss}
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
@@ -265,9 +278,9 @@ export const DisplayTestScripture = () => {
                             Choose the answer for the selected blank.
                         </Text>
 
-                        {activeBlankIndex !== null ? (
+                        {/* {activeBlankIndex !== null ? (
                             <Text style={styles.activeBlankText}>Blank selected</Text>
-                        ) : null}
+                        ) : null} */}
 
                         <View style={styles.wordList}>
                             {answerChoices.map((answer) => (
@@ -285,6 +298,7 @@ export const DisplayTestScripture = () => {
                         <Pressable
                             style={styles.closeButton}
                             onPress={() => {
+                                setPendingSelection(null);
                                 setModalVisible(false);
                                 setActiveBlankIndex(null);
                             }}

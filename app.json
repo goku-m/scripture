@@ -20,16 +20,6 @@
       },
       "predictiveBackGestureEnabled": false
     },
-    "web": {
-      "name": "Scripture",
-      "shortName": "Scripture",
-      "description": "Memorize and quiz Bible verses in a clean progressive web app.",
-      "lang": "en",
-      "scope": "/",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png",
-      "themeColor": "#E6F4FE"
-    },
     "plugins": [
       "expo-router",
       [
