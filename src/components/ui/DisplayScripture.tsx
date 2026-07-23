@@ -55,7 +55,7 @@ export const DisplayScripture = ({ index }: Props) => {
         hasNavigatedRef.current = true;
         router.replace({
             pathname: "/scripture-test",
-            params: { id: String(index) },
+            params: { id: String(index), rep: "1" },
         });
     }, [shouldNavigate, index]);
 
@@ -68,7 +68,7 @@ export const DisplayScripture = ({ index }: Props) => {
         setShouldNavigate(true);
         router.replace({
             pathname: "/scripture-test",
-            params: { id: String(index) },
+            params: { id: String(index), rep: "1" },
         });
     };
 
@@ -79,10 +79,10 @@ export const DisplayScripture = ({ index }: Props) => {
 
     return (
         <View>
-            <Text style={{ color: "black", fontSize: 18, marginTop: 10, fontWeight: "bold" }}>
+            <Text style={styles.referenceText}>
                 {SCRIPTURE[index].book} {SCRIPTURE[index].chapter} : {SCRIPTURE[index].verse}
             </Text>
-            <Text style={{ color: "grey", fontSize: 24 }}>
+            <Text style={styles.verseText}>
                 {SCRIPTURE[index].text}
             </Text>
 
@@ -128,6 +128,17 @@ const styles = StyleSheet.create({
     centerLabel: {
         color: "#fff",
         fontSize: 16,
-        fontWeight: "800",
+        fontFamily: "Poppins_700Bold",
+    },
+    referenceText: {
+        color: "#111827",
+        fontSize: 18,
+        marginTop: 10,
+        fontFamily: "Poppins_700Bold",
+    },
+    verseText: {
+        color: "#6b7280",
+        fontSize: 24,
+        fontFamily: "Poppins_400Regular",
     },
 });
